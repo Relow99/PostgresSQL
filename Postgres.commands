@@ -1,0 +1,130 @@
+ CREATE DATABASE "Umuzi"
+    WITH 
+    OWNER = postgres
+    ENCODING = 'UTF8'
+    LC_COLLATE = 'English_South Africa.1252'
+    LC_CTYPE = 'English_South Africa.1252'
+    TABLESPACE = pg_default
+    CONNECTION LIMIT = -1;
+
+COMMENT ON DATABASE "Umuzi"
+    IS 'Database for Umuzi';
+
+ CREATE TABLE Customers(
+	CustomerID serial PRIMARY KEY,
+	FirstName varchar(50),
+	LastName varchar(50),
+	Gender varchar(10),
+	Address varchar(200),
+	Phone int ,
+	Email varchar (100),
+	City varchar(20),
+	Country varchar(50)
+);
+
+CREATE TABLE Employees(
+	EmployeesID serial PRIMARY KEY,
+	FirstName varchar(50),
+	LastName varchar(50),
+	Email varchar (100),
+	JobTitle varchar(20)
+);
+CREATE TABLE Orders(
+	OrderID serial PRIMARY KEY,
+	ProductID int,
+	PaymentID int,
+	FulfilledByEmployeeID int,
+	DateRequired Date,
+	DateShipped Time,
+	Status varchar (20)
+);
+
+CREATE TABLE Payments(
+	CustomerID int,
+	PaymentID serial PRIMARY KEY,
+	PaymentDate Date,
+	Amount decimal
+);
+CREATE TABLE Products(
+	ProductID serial PRIMARY KEY,
+	ProductNameID varchar(100),
+	Description varchar(300),
+	BuyPrice decimal
+);
+
+ALTER TABLE public.orders
+ADD FOREIGN KEY (productid) REFERENCES public.products (productid)
+
+ALTER TABLE public.orders
+ADD FOREIGN KEY (paymentid) REFERENCES public.payments (paymentid)
+
+ALTER TABLE public.orders
+ADD FOREIGN KEY(FulfilledByEmployeeID) REFERENCES public.employees(EmployeesID)
+
+ALTER TABLE public.payments
+ADD FOREIGN KEY (customerid) REFERENCES public.customers (customerid)
+
+Insert into public.customers(firstname,lastname,gender,address,phone,email,city,country)
+values('John','Hibert','Male','284 chaucer st','084789657','john@gmail.com','Johannesburg','South Africa')
+Insert into public.customers(firstname,lastname,gender,address,phone,email,city,country)
+values('Thando','Sithole','Female','240 Sect 1','0794445584','thando@gmail.com','Cape Town','South Africa')
+Insert into public.customers(firstname,lastname,gender,address,phone,email,city,country)
+values('Leon','Glen','Male','81 Everton Rd,Gillits','0820832830','Leon@gmail.com','Durban','South Africa')
+Insert into public.customers(firstname,lastname,gender,address,phone,email,city,country)
+values('Julia','Stein','Female','2 Wernerring','0672445058','Js234@yahoo.com','Frankfurt','Germany')
+
+--employees
+Insert into public.employees(firstname,lastname,email,jobtitle)
+values('Kani','Matthew','mat@gmail.com','Manager')
+Insert into public.employees(firstname,lastname,email,jobtitle)
+values('Lesly','Cronje','LesC@gmail.com','Clerk')
+
+--PRODUCTS
+Insert into public.products(Productnameid,Description,BuyPrice)
+values('Harley Davidson Chopper','This replica features working kickstand, front suspension, gear-shift lever',	'150.75')
+Insert into public.products(Productnameid,Description,BuyPrice)
+values('Classic Car','Turnable front wheels,steering function','550.75')
+
+--PAYMENTS
+Insert into public.payments(Customerid,paymentid,paymentdate,amount)
+values(1,1,'2018-09-01','150.75')
+Insert into public.payments(Customerid,paymentid,paymentdate,amount)
+values(5,2,'2018-09-03','150.75')
+
+--ORDERS
+Insert into public.orders(productid,paymentid,fulfilledbyemployeeid,daterequired,status)
+values(	1,1,2,'2018-09-05','Not shipped')
+Insert into public.orders(productid,paymentid,fulfilledbyemployeeid,daterequired,dateshipped,status)
+values(1,2,	2,'2018-09-04','2018-09-03','Shipped')
+Insert into public.orders(productid,paymentid,fulfilledbyemployeeid,daterequired,status)
+values(3,3,	3,'2018-09-06',' Not Shipped')
+
+Select * from Customers
+Select CONCAT(firstName, ' ', lastName) As Name  from Customers
+Select CONCAT(firstName, ' ', lastName)  from Customers where customerid=1
+update Customers set firstname ='Lerato',lastname='Mabits' where customerid=1
+Delete from Customers where customerid=2
+SELECT count(status) FROM (
+Select distinct status from Orders ) A group by status
+SELECT MAX(AMOUNT) FROM public.payments
+Select * from customers order by country asc
+Select * from products where buyprice between 100 and 600
+Select * from Customers where country = 'Germany' AND city  = 'Berlin'
+Select * from Customers where city = 'Cape town' or city  = 'Durban'
+Select * from products where buyprice > 500
+SELECT sum(AMOUNT) FROM public.payments
+
+SELECT count(*) from orders where status ='Shipped'
+
+SELECT Avg(buyprice) AS SaAvergae,Avg(buyprice) * 12 As UsaAverage  from public.products
+
+Select * from  Payments A INNER JOIN Customers B ON A.customerid = B.customerid
+
+Select * from  Products where description ILIKE '%' || 'Turnable front wheels' || '%'; 
+
+
+
+
+
+
+
